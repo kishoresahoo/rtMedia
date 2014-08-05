@@ -13,52 +13,52 @@ class RTMediaEncoding {
     public $uploaded = array();
     public $api_key = false;
 
-    public function __construct($no_init = false) {
-		add_filter('rtmedia_allowed_types', array($this, 'allowed_types_admin_settings'), 10, 1);
-        $this->api_key = get_site_option('rtmedia-encoding-api-key');
-        if ($no_init)
+    public function __construct( $no_init = false ) {
+		add_filter( 'rtmedia_allowed_types', array( $this, 'allowed_types_admin_settings' ), 10, 1 );
+        $this->api_key = get_site_option( 'rtmedia-encoding-api-key' );
+        if ( $no_init )
             return;
-        if (is_admin()) {
+        if ( is_admin() ){
 
 //            add_action('admin_init', array($this, 'encoding_settings'));
 
-            if ($this->api_key)
-                add_action('rtmedia_before_default_admin_widgets', array($this, 'usage_widget'));
+            if ( $this->api_key )
+                add_action( 'rtmedia_before_default_admin_widgets', array( $this, 'usage_widget' ) );
         }
 
-        add_action('admin_init', array($this, 'save_api_key'), 1);
-        if ($this->api_key) {
-            $usage_info = get_site_option('rtmedia-encoding-usage');
+        add_action( 'admin_init', array( $this, 'save_api_key' ), 1 );
+        if ( $this->api_key ){
+            $usage_info = get_site_option( 'rtmedia-encoding-usage' );
 
-            if ($usage_info) {
-                if (isset($usage_info[$this->api_key]->status) && $usage_info[$this->api_key]->status) {
-                    if (isset($usage_info[$this->api_key]->remaining) && $usage_info[$this->api_key]->remaining > 0) {
-                        if ($usage_info[$this->api_key]->remaining < 524288000 && !get_site_option('rtmedia-encoding-usage-limit-mail'))
-                            $this->nearing_usage_limit($usage_info);
-                        elseif ($usage_info[$this->api_key]->remaining > 524288000 && get_site_option('rtmedia-encoding-usage-limit-mail'))
-                            update_site_option('rtmedia-encoding-usage-limit-mail', 0);
+            if ( $usage_info ){
+                if ( isset( $usage_info[$this->api_key]->status ) && $usage_info[$this->api_key]->status ){
+                    if ( isset( $usage_info[$this->api_key]->remaining ) && $usage_info[$this->api_key]->remaining > 0 ){
+                        if ( $usage_info[$this->api_key]->remaining < 524288000 && !get_site_option( 'rtmedia-encoding-usage-limit-mail' ) )
+                            $this->nearing_usage_limit( $usage_info );
+                        elseif ( $usage_info[$this->api_key]->remaining > 524288000 && get_site_option( 'rtmedia-encoding-usage-limit-mail' ) )
+                            update_site_option( 'rtmedia-encoding-usage-limit-mail', 0 );
                         /**
                          * @todo update class_name
                          */
-                        if (!class_exists('RTMediaFFMPEG') && !class_exists('RTMediaKaltura'))
-                            add_filter('rtmedia_after_add_media', array($this, 'encoding'), 10, 3);
-                        $blacklist = array('localhost', '127.0.0.1');
-                        if (!in_array($_SERVER['HTTP_HOST'], $blacklist)) {
-                            add_filter('rtmedia_plupload_files_filter', array($this, 'allowed_types'), 10, 1);
-                            add_filter('rtmedia_allowed_types', array($this, 'allowed_types_admin_settings'), 10, 1);
-                            add_filter('rtmedia_valid_type_check', array($this, 'bypass_video_audio'), 10, 2);
+                        if ( ! class_exists( 'RTMediaFFMPEG' ) && ! class_exists( 'RTMediaKaltura' ) )
+                            add_filter( 'rtmedia_after_add_media', array( $this, 'encoding' ), 10, 3 );
+                        $blacklist = array( 'localhost', '127.0.0.1' );
+                        if ( ! in_array( $_SERVER['HTTP_HOST'], $blacklist ) ){
+                            add_filter( 'rtmedia_plupload_files_filter', array( $this, 'allowed_types' ), 10, 1 );
+                            add_filter( 'rtmedia_allowed_types', array( $this, 'allowed_types_admin_settings' ), 10, 1 );
+                            add_filter( 'rtmedia_valid_type_check', array( $this, 'bypass_video_audio' ), 10, 2 );
                         }
                     }
                 }
             }
         }
 
-        add_action('init', array($this, 'handle_callback'), 20);
-        add_action('wp_ajax_rtmedia_free_encoding_subscribe', array($this, 'free_encoding_subscribe'));
-        add_action('wp_ajax_rtmedia_unsubscribe_encoding_service', array($this, 'unsubscribe_encoding'));
-        add_action('wp_ajax_rtmedia_hide_encoding_notice', array($this, 'hide_encoding_notice'), 1);
-        add_action('wp_ajax_rtmedia_enter_api_key', array($this, 'enter_api_key'), 1);
-        add_action('wp_ajax_rtmedia_disable_encoding', array($this, 'disable_encoding'), 1);
+        add_action( 'init', array( $this, 'handle_callback' ), 20 );
+        add_action( 'wp_ajax_rtmedia_free_encoding_subscribe', array( $this, 'free_encoding_subscribe' ) );
+        add_action( 'wp_ajax_rtmedia_unsubscribe_encoding_service', array( $this, 'unsubscribe_encoding' ) );
+        add_action( 'wp_ajax_rtmedia_hide_encoding_notice', array( $this, 'hide_encoding_notice' ), 1 );
+        add_action( 'wp_ajax_rtmedia_enter_api_key', array( $this, 'enter_api_key' ), 1);
+        add_action( 'wp_ajax_rtmedia_disable_encoding', array( $this, 'disable_encoding' ), 1 );
 	//add_action('wp_ajax_rtmedia_regenerate_thumbnails', array($this, 'rtmedia_regenerate_thumbnails'), 1);
     }
     /**
