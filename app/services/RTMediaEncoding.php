@@ -672,12 +672,12 @@ class RTMediaEncoding {
 	    return $upload_dir;
 	}
 
-	public function reencoding($attachment, $autoformat = true) {
+	public function reencoding( $attachment, $autoformat = true ) {
 	    $rtmedia_model = new RTMediaModel();
-	    $media_array = $rtmedia_model->get(array("media_id" => $attachment));
+	    $media_array = $rtmedia_model->get( array( "media_id" => $attachment ) );
 	    $media_id = $media_array[0]->id;
-	    $attached_file = get_post_meta($attachment, '_wp_attached_file');
-	    $upload_path = trim(get_option('upload_path'));
+	    $attached_file = get_post_meta( $attachment, '_wp_attached_file' );
+	    $upload_path = trim( get_option( 'upload_path' ) );
 	    if ( empty( $upload_path ) || 'wp-content/uploads' == $upload_path ){
 	        $dir = WP_CONTENT_DIR . '/uploads';
 	    } elseif ( 0 !== strpos( $upload_path, ABSPATH ) ) {
