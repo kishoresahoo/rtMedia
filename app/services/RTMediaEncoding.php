@@ -618,38 +618,35 @@ class RTMediaEncoding {
 	}
 
 	public function enter_api_key() {
-	    if (isset($_GET['apikey'])) {
-	        echo json_encode(array('apikey' => $_GET['apikey']));
-	    }
-	    else {
-	        echo json_encode(array('error' => __('Please enter the api key.', 'rtmedia')));
+	    if ( isset( $_GET['apikey'] ) ){
+	        echo json_encode( array( 'apikey' => $_GET['apikey'] ) );
+	    } else {
+	        echo json_encode( array( 'error' => __( 'Please enter the api key.', 'rtmedia' ) ) );
 	    }
 	    die();
 	}
 
 	public function disable_encoding() {
-	    update_site_option('rtmedia-encoding-api-key', '');
-	    _e('Encoding disabled successfully.', 'rtmedia');
+	    update_site_option( 'rtmedia-encoding-api-key', '' );
+	    _e( 'Encoding disabled successfully.', 'rtmedia' );
 	    die();
 	}
 
 	function upload_dir( $upload_dir ) {
 	    global $rtmedia_interaction, $rt_media_media;
-	    if ( isset($this->uploaded["context"]) && isset($this->uploaded["context_id"]) ){
-	        if ($this->uploaded["context"] != 'group') {
+	    if ( isset( $this->uploaded["context"] ) && isset( $this->uploaded["context_id"] ) ){
+	        if ( $this->uploaded["context"] != 'group' ){
 	            $rtmedia_upload_prefix = 'users/';
 	            $id = $this->uploaded["media_author"];
-	        }
-	        else {
+	        } else {
 	            $rtmedia_upload_prefix = 'groups/';
 	            $id = $this->uploaded["context_id"];
 	        }
 	    } else {
-	        if ($rtmedia_interaction->context->type != 'group') {
+	        if ( $rtmedia_interaction->context->type != 'group' ){
 	            $rtmedia_upload_prefix = 'users/';
 	            $id = $this->uploaded["media_author"];
-	        }
-	        else {
+	        } else {
 	            $rtmedia_upload_prefix = 'groups/';
 	            $id = $rtmedia_interaction->context->id;
 	        }
